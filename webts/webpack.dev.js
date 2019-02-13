@@ -58,6 +58,13 @@ module.exports={
             },
           },
           {
+            test: /\.(ts|tsx)$/,
+            include: path.resolve(__dirname,"src"),//important
+            use: {
+                loader: 'ts-loader'
+              }
+          },
+          {
             test: /\.(js|mjs|jsx)$/,
             include: path.resolve(__dirname,"src"),//important
             use: {

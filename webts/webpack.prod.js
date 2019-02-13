@@ -1,14 +1,11 @@
 'use strict';
 const path = require('path');
-const webpack = require('webpack');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 const {getStyleLoaders,cssRegex,cssModuleRegex,sassRegex,sassModuleRegex}=require("./styleLoader")
 
 const publicPath = '/';
-const publicUrl = '';
-
-const NODE_ENV = "development";
+const NODE_ENV = "production";
 
 module.exports={
   mode: NODE_ENV,
@@ -27,18 +24,15 @@ module.exports={
     ]
   },
   devServer: {
-    contentBase: path.join(__dirname, 'dist1'),
+    contentBase: path.join(__dirname, 'dist'),
     compress: true,
     hot: true,
     port: 9000
   },
   entry: [
-    require.resolve('webpack-dev-server/client') + '?/',
-    require.resolve('webpack/hot/dev-server'),
     path.resolve(__dirname,'src/index')
   ],
   output: {
-    path: path.resolve(__dirname,'dist1'),
     pathinfo: true,
     filename: 'static/js/bundle.js',
     chunkFilename: 'static/js/[name].chunk.js',
@@ -56,6 +50,13 @@ module.exports={
               limit: 10000,
               name: 'static/media/[name].[hash:8].[ext]',
             },
+          },
+          {
+            test: /\.(ts|tsx)$/,
+            include: path.resolve(__dirname,"src"),//important
+            use: {
+                loader: 'ts-loader'
+              }
           },
           {
             test: /\.(js|mjs|jsx)$/,
@@ -81,9 +82,8 @@ module.exports={
   plugins: [
     new HtmlWebpackPlugin(),
     new MiniCssExtractPlugin({
-      filename:  '[name].css',
-      chunkFilename: '[id].css',
-    }),
-    new webpack.HotModuleReplacementPlugin()
+      filename:  'static/css/[name].css',
+      chunkFilename: 'static/css/[id].css',
+    })
   ]
 };
