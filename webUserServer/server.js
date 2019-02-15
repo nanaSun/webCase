@@ -19,28 +19,34 @@ const httpProxy = require('http-proxy');
 // //proxy
 // var proxyMiddleWare = require("http-proxy-middleware");
 var proxyPath = "http://www.cherryvenus.com/";
-var proxyOption ={target:proxyPath,changeOrigoin:true};
+var proxyOption ={target:proxyPath,changeOrigoin:true,selfHandleResponse : true};
 // app.use('/slider', proxyMiddleWare(proxyOption))
 //var proxy=httpProxy.createProxyServer({target:'http://www.cherryvenus.com',selfHandleResponse : true})
 const proxy = httpProxy.createProxyServer({})
-app.use("/slider/",async (req, res, next)=>{
-    proxy.web(req, res, proxyOption,next)
-    proxy.on('proxyRes', function (proxyRes, req, res) {
-      var body = new Buffer('');
-      proxyRes.on('data', function (data) {
-          body = Buffer.concat([body, data]);
-      });
-      proxyRes.on('end', function () {
-          body = Buffer.from(body);
-          console.log("res from data:", body);
-          for(let i in proxyRes.headers){
-              res.setHeader(i, proxyRes.headers[i]);
-          }
-          res.write("aaa");
-          res.end();
-          
-      });
-  });  
+proxy.on('proxyRes', function (proxyRes, req, res) {
+    var body = new Buffer('');
+    proxyRes.on('data', function (data) {
+        console.log("res from data:data");
+        body = Buffer.concat([body, data]);
+    });
+    proxyRes.on('end', function () {
+        body = Buffer.from(body);
+        for(let i in proxyRes.headers){
+            res.setHeader(i, proxyRes.headers[i]);
+        }
+        res.write(body);
+        res.callback()
+        console.log("next");
+    });
+})
+app.use("/slider/",(req, res, next)=>{
+    return new Promise((rs,rj)=>{
+        proxy.close();
+        res.callback=()=>{
+            rs(next())
+        }
+        proxy.web(req, res, proxyOption);
+    })
 })
 
 
