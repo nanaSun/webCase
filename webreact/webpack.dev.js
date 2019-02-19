@@ -30,7 +30,18 @@ module.exports={
     contentBase: path.join(__dirname, 'dist1'),
     compress: true,
     hot: true,
-    port: 9000
+    port: 9000,
+    proxy: {
+      '/api': {
+          target: 'https://www.baidu.com',
+          secure: false,
+          changeOrigin: true,
+          pathRewrite: function (path, req) { 
+            console.log(path,path.replace('/api', '/s') )
+            return path.replace('/api', '/s') 
+          }
+      }
+    }
   },
   entry: [
     require.resolve('webpack-dev-server/client') + '?/',
