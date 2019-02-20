@@ -1,5 +1,6 @@
 'use strict';
 const path = require('path');
+
 const webpack = require('webpack');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
@@ -55,6 +56,10 @@ module.exports={
     chunkFilename: 'static/js/[name].chunk.js',
     publicPath: publicPath,
   },
+  externals: {
+    "react": 'react',
+    "react-dom":'react-dom'
+  },
   module: {
     strictExportPresence: true,
     rules: [
@@ -90,7 +95,10 @@ module.exports={
     ],
   },
   plugins: [
-    new HtmlWebpackPlugin(),
+    new HtmlWebpackPlugin({
+      template:"./public/index.html",
+      inject:true
+    }),
     new MiniCssExtractPlugin({
       filename:  '[name].css',
       chunkFilename: '[id].css',

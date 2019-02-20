@@ -1,4 +1,5 @@
 'use strict';
+const webpack=require("webpack")
 const path = require('path');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
@@ -32,6 +33,26 @@ module.exports={
   entry: [
     path.resolve(__dirname,'src/index')
   ],
+  optimization: {
+    splitChunks: {
+        cacheGroups: {
+            commons: {
+                chunks: "initial",
+                          minChunks: 2,//最小重复的次数
+                          minSize: 0//最小提取字节数
+            },
+            vendor: {
+                test: /node_modules/,
+                chunks: "initial",
+                name: "vendor",
+            }
+        }
+    }
+  },
+  externals: {
+    "react": 'React',
+    "react-dom":'ReactDOM'
+  },
   output: {
     pathinfo: true,
     filename: 'static/js/bundle.js',
@@ -73,10 +94,17 @@ module.exports={
     ],
   },
   plugins: [
-    new HtmlWebpackPlugin(),
+    new HtmlWebpackPlugin({
+      template:"./public/index.html",
+      inject:true
+    }),
     new MiniCssExtractPlugin({
       filename:  'static/css/[name].css',
       chunkFilename: 'static/css/[id].css',
-    })
+    }),
+    // new webpack.DllReferencePlugin({
+    //   context: __dirname,
+    //   manifest: path.join(__dirname, 'dist/vendors-manifest.json'),
+    // })
   ]
 };
