@@ -56,10 +56,10 @@ module.exports={
     chunkFilename: 'static/js/[name].chunk.js',
     publicPath: publicPath,
   },
-  externals: {
-    "react": 'react',
-    "react-dom":'react-dom'
-  },
+  // externals: {
+  //   "react": 'react',
+  //   "react-dom":'react-dom'
+  // },
   module: {
     strictExportPresence: true,
     rules: [
